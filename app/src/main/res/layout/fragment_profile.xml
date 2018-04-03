@@ -22,10 +22,10 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/profile_bio"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginBottom="6dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"
+                android:layout_height="@dimen/profile_card_height_collapsed"
+                android:layout_marginBottom="@dimen/profile_card_buffer"
+                android:layout_marginLeft="@dimen/profile_card_buffer"
+                android:layout_marginRight="@dimen/profile_card_buffer"
                 android:layout_marginTop="212dp"
                 app:cardBackgroundColor="@color/cardview_light_background">
 
@@ -33,13 +33,37 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-                    <TextView
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="24dp"
-                        android:text="@string/profile_bio_header"/>
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                            android:text="@string/profile_bio_header"
+                            android:layout_alignParentLeft="true"/>
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                app:srcCompat="@drawable/ic_expand_more_black_24dp"
+                                android:visibility="visible"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/ic_expand_less_black_24dp"
+                                android:visibility="gone"/>
+                        </FrameLayout>
+
+                    </RelativeLayout>
+
                     <TextView
+                        android:id="@+id/profile_content_bio"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="20dp"
@@ -51,21 +75,44 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/profile_yes"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_margin="6dp"
+                android:layout_height="@dimen/profile_card_height_collapsed"
+                android:layout_margin="@dimen/profile_card_buffer"
                 app:cardBackgroundColor="@color/cardview_light_background">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-                    <TextView
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="24dp"
-                        android:text="@string/profile_yes_header"/>
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                            android:text="@string/profile_yes_header"
+                            android:layout_alignParentLeft="true"/>
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                app:srcCompat="@drawable/ic_expand_more_black_24dp"
+                                android:visibility="visible"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/ic_expand_less_black_24dp"
+                                android:visibility="gone"/>
+                        </FrameLayout>
+
+                    </RelativeLayout>
+
                     <TextView
+                        android:id="@+id/profile_content_yes"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="20dp"
@@ -77,21 +124,44 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/profile_no"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_margin="6dp"
+                android:layout_height="@dimen/profile_card_height_collapsed"
+                android:layout_margin="@dimen/profile_card_buffer"
                 app:cardBackgroundColor="@color/cardview_light_background">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-                    <TextView
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="24dp"
-                        android:text="@string/profile_no_header"/>
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                            android:text="@string/profile_no_header"/>
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                app:srcCompat="@drawable/ic_expand_more_black_24dp"
+                                android:visibility="visible"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/ic_expand_less_black_24dp"
+                                android:visibility="gone"/>
+                        </FrameLayout>
+                    </RelativeLayout>
+
+
+
                     <TextView
+                        android:id="@+id/profile_content_no"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="20dp"
@@ -103,25 +173,44 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/profile_wishlists"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_margin="6dp"
+                android:layout_height="@dimen/profile_card_height_collapsed"
+                android:layout_margin="@dimen/profile_card_buffer"
                 app:cardBackgroundColor="@color/cardview_light_background">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-                    <TextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="24dp"
-                        android:text="@string/profile_wishlist_header"/>
-                    <TextView
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                            android:text="@string/profile_wishlist_header"
+                            android:layout_alignParentLeft="true"/>
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                app:srcCompat="@drawable/ic_expand_more_black_24dp"
+                                android:visibility="visible"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:srcCompat="@drawable/ic_expand_less_black_24dp"
+                                android:visibility="gone"/>
+                        </FrameLayout>
+                    </RelativeLayout>
+
+                    <FrameLayout
+                        android:id="@+id/wishlists_place"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="20dp"
-                        android:text="@string/profile_wishlist"/>
+                        android:layout_height="match_parent"/>
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
@@ -130,10 +219,13 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- ...... -->
+    <!-- HEADER -->
+    <!-- ...... -->
     <android.support.v7.widget.CardView
         android:id="@+id/profile_header"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="@dimen/profile_header_height_expanded"
         app:cardBackgroundColor="#6666aa">
 
         <LinearLayout
@@ -141,6 +233,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <ImageView
+                android:id="@+id/profile_content_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
@@ -148,6 +241,7 @@
                 android:src="@mipmap/ic_launcher"/>
 
             <TextView
+                android:id="@+id/profile_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"

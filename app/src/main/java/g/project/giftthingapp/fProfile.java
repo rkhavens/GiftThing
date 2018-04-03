@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 
@@ -28,12 +31,21 @@ public class fProfile extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, Bundle savedInstanceState){
         fab_edit = (FloatingActionButton) this.getView().findViewById(R.id.profile_edit_fab);
         fab_edit.setOnClickListener(this);
+
+        FrameLayout frag_frame = (FrameLayout) this.getView().findViewById(R.id.wishlists_place);
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.wishlists_place, new fWishlistList());
+        ft.commit();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+
+
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
