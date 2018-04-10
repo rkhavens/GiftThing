@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_itemBox"
+    android:background="@android:drawable/list_selector_background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -54,7 +56,5 @@
         android:layout_marginRight="@dimen/item_buffer"
         android:layout_marginEnd="@dimen/item_buffer"
         android:text="Quantity: 1"/>
-
-
 
 </LinearLayout>

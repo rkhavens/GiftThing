@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="g.project.giftthingapp.fWishlist">
+    tools:context="g.project.giftthingapp.fWishbook">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -10,7 +10,7 @@
         android:layout_alignParentTop="true">
 
         <LinearLayout
-            android:id="@+id/item_layout"
+            android:id="@+id/wishlist_layout"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></LinearLayout>

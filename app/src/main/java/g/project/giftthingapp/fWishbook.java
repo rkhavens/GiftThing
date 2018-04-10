@@ -1,5 +1,6 @@
 package g.project.giftthingapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,37 +14,40 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 
-public class fWishlist extends Fragment {
+import g.project.giftthingapp.dummy.DummyContent.DummyItem;
 
-    //Param argument names
+
+public class fWishbook extends Fragment {
+
+    //list of wishbook display information
+    ArrayList<Wishlist> wishlists;
+
+    //param argument names
     private static final String ARG_UID = "user-id";
-    private static final String ARG_INDEX = "wishlist-name";
 
-    // Params
+    //param
     private String uID;
-    private int index;
-
-    //Wishlist object for display information
-    private Wishlist currentWishlist;
 
     //Views
-    private LinearLayout itemLayout;
+    private LinearLayout wishlistLayout;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public fWishlist() {
+    public fWishbook() {
     }
 
-    public static fWishlist newInstance(String uID, int index) {
-        fWishlist fragment = new fWishlist();
+    public static fWishbook newInstance(String uID) {
+        fWishbook fragment = new fWishbook();
         Bundle args = new Bundle();
         args.putString(ARG_UID, uID);
-        args.putInt(ARG_INDEX, index);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,35 +58,38 @@ public class fWishlist extends Fragment {
 
         if (getArguments() != null) {
             uID = getArguments().getString(ARG_UID);
-            index = getArguments().getInt(ARG_INDEX);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_wishlist, container, false);
+        View view = inflater.inflate(R.layout.fragment_wishbook, container, false);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
 
-        //initialize Wishlist object
-        currentWishlist = new Wishlist();
+        //initialize list
+        wishlists = new ArrayList<>();
 
         //initialize views
-        itemLayout = this.getView().findViewById(R.id.item_layout);
+        wishlistLayout = this.getView().findViewById(R.id.wishlist_layout);
 
         //Connect to current wishlist in Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + Integer.toString(index));
+        DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList");
 
         //Will update view every time current user's friends list is updated in
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                currentWishlist = dataSnapshot.getValue(Wishlist.class);
+
+                GenericTypeIndicator<ArrayList<Wishlist>> genericTypeIndicator =new GenericTypeIndicator<ArrayList<Wishlist>>(){};
+
+                wishlists = dataSnapshot.getValue(genericTypeIndicator);
+                //wishlists = dataSnapshot.getValue(ArrayList<>.class);
                 drawListItems();
             }
 
@@ -92,42 +99,41 @@ public class fWishlist extends Fragment {
             }
         });
     }
-
     public void drawListItems()
     {
-        for(int i = 0; i < currentWishlist.getItemList().size(); i++) {
-            FragmentManager fm = ((MainActivity) fWishlist.this
+        for(int i = 0; i < wishlists.size(); i++) {
+            FragmentManager fm = ((MainActivity) fWishbook.this
                     .getActivity()).getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
 
-            WishlistItem item = currentWishlist.getItemList().get(i);
+            Wishlist list = wishlists.get(i);
 
-            fWishlistItem fragment = fWishlistItem.newInstance(item);
-            ft.add(R.id.item_layout, fragment);
+            fWishbookItem fragment = fWishbookItem.newInstance(list, uID, i);
+            ft.add(R.id.wishlist_layout, fragment);
 
             ft.commit();
         }
     }
 
     //grab display information from each friend in current user's friend list
-    public void getItemInfo()
+    public void getListInfo()
     {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         //Get display information from wishlist items
-        for(int i = 0; i < currentWishlist.getItemList().size(); i++) {
+        for(int i = 0; i < wishlists.size(); i++) {
 
             //get reference to single item on list
-            DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + index + "/ItemList/" + Integer.toString(i));
+            DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + Integer.toString(i));
 
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                WishlistItem item = new WishlistItem();
+                Wishlist list = new Wishlist();
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    item = dataSnapshot.getValue(WishlistItem.class);
-                    //drawListItem(item);
+                    list = dataSnapshot.getValue(Wishlist.class);
+                    //drawListItem(list);
                 }
 
                 @Override
@@ -137,5 +143,4 @@ public class fWishlist extends Fragment {
             });
         }
     }
-
 }

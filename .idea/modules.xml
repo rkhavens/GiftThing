@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GiftThingApp.iml" filepath="$PROJECT_DIR$/GiftThingApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GiftThing.iml" filepath="$PROJECT_DIR$/GiftThing.iml" />
+      <module fileurl="file://C:\Users\MarcP\Documents\GitHub\GiftThing\GiftThingApp.iml" filepath="C:\Users\MarcP\Documents\GitHub\GiftThing\GiftThingApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
