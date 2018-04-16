@@ -78,6 +78,11 @@ public class fFriendList extends Fragment implements View.OnClickListener {
         });
     }
 
+    public void reloadFragment(){
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,7 +91,7 @@ public class fFriendList extends Fragment implements View.OnClickListener {
     }
 
     //Draw and display a single friend item in friendLayout
-    public void drawListItem(String uID, String name, boolean search)
+    public void drawListItem(String uID, String name, int friendCount, boolean search)
     {
         index++;
         boolean isFriend = true;
@@ -106,7 +111,7 @@ public class fFriendList extends Fragment implements View.OnClickListener {
                 .getActivity()).getSupportFragmentManager();
         FragmentTransaction ft =  fm.beginTransaction();
 
-        fFriendlist_Item fragment = fFriendlist_Item.newInstance(uID, name, Integer.toString(index), isFriend);
+        fFriendlist_Item fragment = fFriendlist_Item.newInstance(uID, name, friendCount, Integer.toString(index), isFriend);
         if(search)
             ft.add(R.id.results_layout,fragment);
         else
@@ -118,19 +123,22 @@ public class fFriendList extends Fragment implements View.OnClickListener {
     //grab display information from each friend in current user's friend list
     public void getFriendInfo(ArrayList<String> list, final boolean search)
     {
+
+        if(!search) list = MainActivity.userProfile.getFriendsList();
         //Get display information from users friendslist
         for(int i = 0; i < list.size(); i++) {
 
             myRef = database.getReference("Profile/User/" + list.get(i));
-
+            System.out.println(list.get(i));
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
                 Profile user = new Profile();
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
                     user = dataSnapshot.getValue(Profile.class);
-                    drawListItem(user.getUid(), user.getName(), search);
+                    drawListItem(user.getUid(), user.getName(), user.getNumberOfFriends(), search);
                 }
 
                 @Override

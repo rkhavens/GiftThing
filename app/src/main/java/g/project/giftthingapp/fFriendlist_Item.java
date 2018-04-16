@@ -33,15 +33,17 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
 
     //variables
     private String uID;
+    private int friendCount;
 
     //Use this function to generate a new instance of fFriendlist_Item
-    public static fFriendlist_Item newInstance(String uID, String name, String pos, boolean isFriend) {
+    public static fFriendlist_Item newInstance(String uID, String name, int friendCount, String pos, boolean isFriend) {
         fFriendlist_Item myFragment = new fFriendlist_Item();
 
         Bundle args = new Bundle();
         args.putString("uID", uID);
         args.putString("name", name);
         args.putString("pos", pos);
+        args.putInt("friendCount", friendCount);
         args.putBoolean("isFriend",isFriend);
         myFragment.setArguments(args);
 
@@ -52,6 +54,7 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, Bundle savedInstanceState){
 
         uID = getArguments().getString("uID");
+        friendCount = getArguments().getInt("friendCount");
 
         //Initialize display views
         itemBox = this.getView().findViewById(R.id.layout_itemBox);
@@ -95,10 +98,16 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
         }
         else if(i == R.id.add_friend_button){
             System.out.println("pushed");
-            MainActivity.userProfile.addFriend(uID);
+
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("Profile/User/" + MainActivity.userProfile.getUid() + "/friendsList");
-            myRef.setValue(MainActivity.userProfile.getFriendsList());
+            DatabaseReference myRef = database.getReference("Profile/User/" + MainActivity.userProfile.getUid() + "/friendsList/" + MainActivity.userProfile.getNumberOfFriends());
+            myRef.setValue(uID);
+
+            myRef = database.getReference("Profile/User/" + uID + "/friendsList/" + friendCount);
+            myRef.setValue(MainActivity.userProfile.getUid());
+
+            ft.replace(R.id.fragment_place, new fFriendList());
+            ft.commit();
         }
     }
 }
