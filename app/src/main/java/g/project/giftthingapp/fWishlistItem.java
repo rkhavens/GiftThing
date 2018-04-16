@@ -1,5 +1,7 @@
 package g.project.giftthingapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -92,17 +94,17 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        /*
+
         FragmentManager fm = ((MainActivity) fWishlistItem.this
                 .getActivity()).getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
 
-        //When item is clicked, load profile fragment with friend information
+        //When item is clicked, follow item url
         int i = v.getId();
         if (i == R.id.layout_itemBox) {
-            ft.replace(R.id.fragment_place, fProfile.newInstance(getArguments().getString("uID")));
-            ft.commit();
+            Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(itemURL));
+            startActivity(intent);
 
-        }*/
+        }
     }
 }
