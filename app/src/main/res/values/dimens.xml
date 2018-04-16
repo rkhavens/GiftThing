@@ -12,6 +12,6 @@
     <dimen name="profile_header_height_expanded">200dp</dimen>
     <dimen name="profile_header_height_collapsed">100dp</dimen>
     <dimen name="profile_card_height_collapsed">150dp</dimen>
-    <dimen name="profile_card_height_expanded">wrap_content</dimen>
+    <dimen name="profile_card_height_expanded">300dp</dimen>
     <dimen name="profile_card_buffer">6dp</dimen>
 </resources>

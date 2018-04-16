@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,37 +15,47 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import g.project.giftthingapp.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity
-        implements fWishlistList.OnListFragmentInteractionListener,
-                    fHomeList.OnListFragmentInteractionListener,
-                    fFriendList.OnListFragmentInteractionListener,
-                    fWishlist.OnListFragmentInteractionListener,
+        implements fHomeList.OnListFragmentInteractionListener,
                     NavigationView.OnNavigationItemSelectedListener {
 
 
-    public void setActionBarTitle(String title) {
-        getSupportActionBar().setTitle(title);
-    }
-    //defaults
+    //firebase
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+
+    //user profile of current user
+    //to be accessible by all fragments
+    public static Profile userProfile;
+    public static int test = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+        //get current user
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
+        //initialize userProfile
+        userProfile = new Profile();
+
+        //Set up drawer layout for navigation
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -55,9 +64,38 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        //setActionBarTitle("Boo");
+
+        //connect to firebase
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("Profile/User/" + currentUser.getUid());
+
+        //get profile information of current user
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                userProfile = dataSnapshot.getValue(Profile.class);
+
+                //Load profile screen after login
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                if(test == 0) {
+                    ft.replace(R.id.fragment_place, fProfile.newInstance(userProfile.getUid()));
+                    ft.commit();
+                    getSupportActionBar().setTitle("My Profile");
+                    test = 1;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
 
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
 
     @Override
     public void onBackPressed() {
@@ -116,7 +154,7 @@ public class MainActivity extends AppCompatActivity
             ft.commit();
             getSupportActionBar().setTitle("Home");
         } else if (id == R.id.nav_profile) {
-            ft.replace(R.id.fragment_place, new fProfile());
+            ft.replace(R.id.fragment_place, fProfile.newInstance(userProfile.getUid()));
             ft.commit();
             getSupportActionBar().setTitle("My Profile");
         } else if (id == R.id.nav_friends) {
@@ -124,7 +162,7 @@ public class MainActivity extends AppCompatActivity
             ft.commit();
             getSupportActionBar().setTitle("Friends List");
         } else if (id == R.id.nav_wishlists) {
-            ft.replace(R.id.fragment_place, new fWishlist());
+            ft.replace(R.id.fragment_place, fWishbook.newInstance(userProfile.getUid()));
             ft.commit();
             getSupportActionBar().setTitle("My Wishlists");
         } else if (id == R.id.nav_manage) {

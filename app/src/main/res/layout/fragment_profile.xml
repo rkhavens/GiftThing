@@ -173,7 +173,7 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/profile_wishlists"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/profile_card_height_collapsed"
+                android:layout_height="wrap_content"
                 android:layout_margin="@dimen/profile_card_buffer"
                 app:cardBackgroundColor="@color/cardview_light_background">
 
@@ -211,6 +211,7 @@
                         android:id="@+id/wishlists_place"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
+
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
