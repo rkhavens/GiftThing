@@ -26,36 +26,64 @@ import com.google.firebase.database.ValueEventListener;
 import g.project.giftthingapp.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity
-        implements fHomeList.OnListFragmentInteractionListener,
+        implements //fWishbook.OnListFragmentInteractionListener,
+                    fHomeList.OnListFragmentInteractionListener,
+                    //fFriendList.OnListFragmentInteractionListener,
+                    //fWishlist.OnListFragmentInteractionListener,
                     NavigationView.OnNavigationItemSelectedListener {
 
 
-    //firebase
+
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
-
-    //user profile of current user
-    //to be accessible by all fragments
     public static Profile userProfile;
-    public static int test = 0;
+    public static boolean needsRefresh = false;
+    public static Profile user;
+    public static int test;
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+    //defaults
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //Set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //get current user
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-
-        //initialize userProfile
         userProfile = new Profile();
+        /*userProfile.setName("Mark Payne");
+        userProfile.setAddress("1234 address lane");
+        userProfile.setBiography("I like turtles");
+        userProfile.setBirthday("09/28/1994");
+        //userProfile.setDislikes("stepping on legos");
+        userProfile.setFavColor("Green");
+        userProfile.setUid(currentUser.getUid());
+        userProfile.addHobby("Making");
+        userProfile.addHobby("Sleeping");
+        userProfile.addLikes("Star Wars");
+        userProfile.addLikes("Zelda");
+        userProfile.addFriend("FU15EsMqhff0LpBaSa7oXOEBHpV2");
+        userProfile.addFriend("7QkZ0oyXScgrEin7BZvV4YSeUND3");
 
-        //Set up drawer layout for navigation
+        Wishlist bDay = new Wishlist();
+        bDay.setDateCreated("4.9.18");
+        bDay.setListDescription("its for my birthday yo");
+        bDay.setListName("Birthday Wishlist");
+        bDay.setPrivacyLevel("Public");
+
+        WishlistItem item1 = new WishlistItem();
+        item1.setItemDescription("I love this item");
+        item1.setItemName("bouncy ball");
+        item1.setItemURL("linky.link.com");
+
+        bDay.addWishlistItem(item1);
+
+        userProfile.addWishlist(bDay);*/
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -64,26 +92,16 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //setActionBarTitle("Boo");
 
-        //connect to firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Profile/User/" + currentUser.getUid());
+        //myRef.setValue(userProfile);
 
-        //get profile information of current user
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userProfile = dataSnapshot.getValue(Profile.class);
-
-                //Load profile screen after login
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-
-                if(test == 0) {
-                    ft.replace(R.id.fragment_place, fProfile.newInstance(userProfile.getUid()));
-                    ft.commit();
-                    getSupportActionBar().setTitle("My Profile");
-                    test = 1;
-                }
             }
 
             @Override
@@ -91,10 +109,6 @@ public class MainActivity extends AppCompatActivity
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
-    }
-
-    public void setActionBarTitle(String title) {
-        getSupportActionBar().setTitle(title);
     }
 
     @Override
