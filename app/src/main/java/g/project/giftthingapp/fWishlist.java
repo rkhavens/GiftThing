@@ -1,13 +1,17 @@
 package g.project.giftthingapp;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,8 +19,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-public class fWishlist extends Fragment {
+import java.io.IOException;
+
+
+public class fWishlist extends Fragment implements View.OnClickListener{
 
     //Param argument names
     private static final String ARG_UID = "user-id";
@@ -31,6 +42,10 @@ public class fWishlist extends Fragment {
 
     //Views
     private LinearLayout itemLayout;
+    private CardView addItemCard;
+    private LinearLayout itemCreationForm;
+    protected TextView addLinkText;
+    private Button addLinkButton;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -73,16 +88,26 @@ public class fWishlist extends Fragment {
 
         //initialize views
         itemLayout = this.getView().findViewById(R.id.item_layout);
+        addItemCard = this.getView().findViewById(R.id.add_item_card);
+        itemCreationForm = this.getView().findViewById(R.id.item_creation_form);
+        addLinkText = this.getView().findViewById(R.id.add_link_text);
+        addLinkButton = this.getView().findViewById(R.id.add_link_button);
+
+        //set on click listeners
+        addItemCard.setOnClickListener(this);
+        addLinkButton.setOnClickListener(this);
 
         //Connect to current wishlist in Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + Integer.toString(index));
 
         //Will update view every time current user's friends list is updated in
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentWishlist = dataSnapshot.getValue(Wishlist.class);
+
+                itemLayout.removeAllViews();
                 drawListItems();
             }
 
@@ -109,33 +134,156 @@ public class fWishlist extends Fragment {
         }
     }
 
-    //grab display information from each friend in current user's friend list
-    public void getItemInfo()
-    {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public void reloadFragment() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
+    }
 
-        //Get display information from wishlist items
-        for(int i = 0; i < currentWishlist.getItemList().size(); i++) {
+    @Override
+    public void onClick(View v) {
 
-            //get reference to single item on list
-            DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + index + "/ItemList/" + Integer.toString(i));
 
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        //When item is clicked, load profile fragment with friend information
+        int i = v.getId();
+        if (i == R.id.add_link_button) {
+            new WebScraper().execute();
 
-                WishlistItem item = new WishlistItem();
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    item = dataSnapshot.getValue(WishlistItem.class);
-                    //drawListItem(item);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    System.out.println("The read failed: " + databaseError.getCode());
-                }
-            });
         }
     }
+
+    private class WebScraper extends AsyncTask<Void, Void, Void> {
+
+        private String title;
+        private String name = "";
+        private String description = "";
+        private double price = 0;
+        private String url = "https://www.amazon.com/Players-Handbook-Dungeons-Dragons-Wizards/dp/0786965606/ref=sr_1_2?ie=UTF8&qid=1523496117&sr=8-2&keywords=dnd";
+
+        public String cleanString(String str){
+            System.out.print(str);
+            //str.replaceFirst("\u00a0", "");
+            //while(Character.isWhitespace(str.charAt(0)))
+            //str = str.replaceFirst("\\s", "");
+            /*
+            str = str.replace("<div>", "");
+            str = str.replace("<em>", "");
+            str = str.replace("</em>", "");
+            str = str.replace("</div>", "");
+            str = str.replace("<br>","");
+            str = str.replace("\"", "");
+            str = str.replace("<b>", "");
+            str = str.replace("</b>","");
+            str = str.replace("&nbsp;","");
+*/
+            //str = str.replace("&amp;", "&");
+
+            Document doc = Jsoup.parse(str);
+            str = doc.text();
+            System.out.print(str);
+            return str;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            /*mProgressDialog = new ProgressDialog(MainActivity.this);
+            mProgressDialog.setTitle("Android Basic JSoup Tutorial");
+            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.show();*/
+            url = addLinkText.getText().toString();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+
+                // Connect to the web site
+                Document document = Jsoup.connect(url).get();
+
+                // Get the html document title
+                title = document.title();
+
+                //Get product title from html
+                Elements nameElementChildren = document.getElementsByTag("span");
+
+                for (Element e : nameElementChildren) {
+                    String key = "";
+                    if (e.hasAttr("id"))
+                        key = e.attr("id").toUpperCase();
+                    System.out.println(key);
+                    if (key.contains("PRODUCTTITLE")) {
+                        name = e.html();
+                        System.out.println("Name: "+name);
+                        break;
+                    }
+                }
+
+                //Get description from html for books/ebooks
+                if(!(document.getElementById("bookDescription_feature_div") == null)) {
+                    Element descElement = document.getElementById("bookDescription_feature_div");
+                    Elements descElementChildren = descElement.getElementsByTag("noscript");
+                    for (Element e : descElementChildren) {
+                        description = e.html();
+                    }
+                }
+
+
+                //Get description from html for other items
+                if(!(document.getElementById("featurebullets_feature_div") == null)) {
+                    Element descElement = document.getElementById("featurebullets_feature_div");
+                    Elements descElementChildren = descElement.getElementsByTag("li");
+                    for (Element e : descElementChildren) {
+                        if(!(e.hasAttr("id"))) {
+                            Document doc = Jsoup.parse(e.html());
+                            description = description + "\n" + doc;
+                        }
+                    }
+                }
+
+
+                //Get price from html
+                Element priceElement = document.getElementById("buybox");
+                Elements priceElementChildren = priceElement.getElementsByTag("span");
+
+                for (Element e : priceElementChildren) {
+                    String key = "";
+                    if(e.hasAttr("class"))
+                        key = e.attr("class");
+                    System.out.println(key);
+                    if ("a-size-medium a-color-price offer-price a-text-normal".equals(key)) {
+                        price = Double.parseDouble(e.html().replace("$",""));
+                    }
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            // Set title into TextView
+            WishlistItem item = new WishlistItem();
+            item.setItemURL(url);
+            item.setItemName(cleanString(name));
+            item.setItemDescription(cleanString(description));
+            item.setItemPrice(price);
+            item.setQtyDesired(1);
+            item.setQtyPurchased(0);
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + Integer.toString(index) + "/itemList/" + Integer.toString(currentWishlist.getItemList().size()));
+            myRef.setValue(item);
+
+            reloadFragment();
+        }
+    }
+
+
 
 }

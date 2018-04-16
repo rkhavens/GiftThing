@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,15 +26,17 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
     private LinearLayout itemBox;
     private TextView friend_name;
     private TextView friend_pos;
+    private Button addFriendButton;
 
     //Use this function to generate a new instance of fFriendlist_Item
-    public static fFriendlist_Item newInstance(String uID, String name, String pos) {
+    public static fFriendlist_Item newInstance(String uID, String name, String pos, boolean isFriend) {
         fFriendlist_Item myFragment = new fFriendlist_Item();
 
         Bundle args = new Bundle();
         args.putString("uID", uID);
         args.putString("name", name);
         args.putString("pos", pos);
+        args.putBoolean("isFriend",isFriend);
         myFragment.setArguments(args);
 
         return myFragment;
@@ -49,10 +52,15 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
         //Initialize display views
         friend_name = this.getView().findViewById(R.id.friend_name);
         friend_pos = this.getView().findViewById(R.id.item_number);
+        addFriendButton = this.getView().findViewById(R.id.add_friend_button);
 
         //Set displays with display information
         friend_name.setText(getArguments().getString("name"));
         friend_pos.setText(getArguments().getString("pos"));
+
+        if(getArguments().getBoolean("isFriend"))
+            addFriendButton.setVisibility(View.GONE);
+
 
     }
 

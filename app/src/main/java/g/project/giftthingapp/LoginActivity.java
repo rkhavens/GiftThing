@@ -21,7 +21,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -38,6 +41,7 @@ public class LoginActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private DatabaseReference myRef;
 
     // UI references.
     //Sign in views
@@ -98,9 +102,7 @@ public class LoginActivity extends AppCompatActivity
             return;
         }
 
-        Context context = getApplicationContext();
-        Toast toast = Toast.makeText(context, "Pre Creation", Toast.LENGTH_SHORT);
-        toast.show();
+
 
         //showProgressDialog();
 
@@ -112,7 +114,7 @@ public class LoginActivity extends AppCompatActivity
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            final FirebaseDatabase database = FirebaseDatabase.getInstance();
                             user = mAuth.getCurrentUser();
 
                             user.getEmail();
@@ -125,8 +127,28 @@ public class LoginActivity extends AppCompatActivity
                             newProfile.setAddress((cAddress.getText().toString()));
 
 
-                            DatabaseReference myRef = database.getReference("Profile/User/" + user.getUid());
+                            myRef = database.getReference("Profile/User/" + user.getUid());
                             myRef.setValue(newProfile);
+
+                            final String username = newProfile.getName().toUpperCase().replace(" ", "");
+
+                            myRef = database.getReference("Profile/Usernames/" + username);
+                            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                   int index = 0;
+                                   for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                                        index++;
+                                    }
+                                   myRef = database.getReference("Profile/Usernames/" +  username + "/" + index);
+                                   myRef.setValue(user.getUid());
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    System.out.println("The read failed: " + databaseError.getCode());
+                                }
+                            });
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);

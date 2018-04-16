@@ -23,7 +23,6 @@
         android:textSize="25sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
@@ -31,7 +30,6 @@
         android:textSize="15sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
 
         <View

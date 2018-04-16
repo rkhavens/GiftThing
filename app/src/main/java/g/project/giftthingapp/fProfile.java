@@ -23,6 +23,7 @@ public class fProfile extends Fragment implements View.OnClickListener {
 
     //Buttons
     FloatingActionButton fab_edit;
+    FrameLayout frag_frame;
 
     //Text Views
     TextView profile_name;
@@ -44,14 +45,28 @@ public class fProfile extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
-        fab_edit = (FloatingActionButton) this.getView().findViewById(R.id.profile_edit_fab);
-        fab_edit.setOnClickListener(this);
+    public void onPause() {
+        super.onPause();
+    }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+
+
+
+        //initialize views
+
+        fab_edit = (FloatingActionButton) this.getView().findViewById(R.id.profile_edit_fab);
+        frag_frame = (FrameLayout) this.getView().findViewById(R.id.wishlists_place);
         profile_name = this.getView().findViewById(R.id.profile_name);
         profile_content_bio = this.getView().findViewById(R.id.profile_content_bio);
         profile_content_yes = this.getView().findViewById(R.id.profile_content_yes);
         profile_content_no = this.getView().findViewById(R.id.profile_content_no);
+
+        //set on click listeners
+        fab_edit.setOnClickListener(this);
+        frag_frame.setOnClickListener(this);
+
 
         userProfile = new Profile();
 
@@ -61,7 +76,7 @@ public class fProfile extends Fragment implements View.OnClickListener {
         DatabaseReference myRef = database.getReference("Profile/User/" + uID);
         //myRef.setValue(userProfile);
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userProfile = dataSnapshot.getValue(Profile.class);
@@ -89,18 +104,29 @@ public class fProfile extends Fragment implements View.OnClickListener {
         profile_content_no.setText(userProfile.getDislikesAsString());
         profile_name.setText(userProfile.getName());
 
+
+        //open wishlist view inside profile
+        /*
         FrameLayout frag_frame = (FrameLayout) this.getView().findViewById(R.id.wishlists_place);
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.wishlists_place, fWishbook.newInstance(userProfile.getUid()));
         ft.commit();
-
+        */
     }
     @Override
     public void onClick(View v){
+
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         switch (v.getId()){
             case R.id.profile_edit_fab:
                 Snackbar.make(v, "EDIT ALL THE THINGS!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                break;
+            case R.id.wishlists_place:
+                ft.replace(R.id.fragment_place, fWishbook.newInstance(userProfile.getUid()));
+                ft.commit();
+                ((MainActivity) getActivity())
+                        .setActionBarTitle(userProfile.getName() + "'s Wishlists");
                 break;
             default:
                 break;

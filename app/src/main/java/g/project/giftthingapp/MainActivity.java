@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     public static Profile userProfile;
+    public static boolean needsRefresh = false;
     public static Profile user;
     public static int test;
     public void setActionBarTitle(String title) {
@@ -82,10 +83,6 @@ public class MainActivity extends AppCompatActivity
         bDay.addWishlistItem(item1);
 
         userProfile.addWishlist(bDay);
-
-
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

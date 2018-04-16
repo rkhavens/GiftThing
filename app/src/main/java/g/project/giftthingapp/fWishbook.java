@@ -2,13 +2,18 @@ package g.project.giftthingapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,14 +23,21 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import g.project.giftthingapp.dummy.DummyContent.DummyItem;
 
 
-public class fWishbook extends Fragment {
+public class fWishbook extends Fragment implements View.OnClickListener {
+
+
+    //Firebase
+    FirebaseDatabase database;
 
     //list of wishbook display information
     ArrayList<Wishlist> wishlists;
+    private boolean needsRefresh;
 
     //param argument names
     private static final String ARG_UID = "user-id";
@@ -35,6 +47,11 @@ public class fWishbook extends Fragment {
 
     //Views
     private LinearLayout wishlistLayout;
+    private LinearLayout wishlistCreationForm;
+    private EditText addName;
+    private EditText addDescription;
+    private CardView newWishlistButton;
+    private Button addWishlistButton;
 
 
     /**
@@ -69,6 +86,16 @@ public class fWishbook extends Fragment {
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
 
         //initialize list
@@ -76,20 +103,37 @@ public class fWishbook extends Fragment {
 
         //initialize views
         wishlistLayout = this.getView().findViewById(R.id.wishlist_layout);
+        wishlistCreationForm = this.getView().findViewById(R.id.wishlist_creation_form);
+        addName = this.getView().findViewById(R.id.add_name);
+        addDescription = this.getView().findViewById(R.id.add_description);
+        newWishlistButton = this.getView().findViewById(R.id.new_wishlist_button);
+        addWishlistButton = this.getView().findViewById(R.id.add_wishlist_button);
+
+        Snackbar.make(wishlistLayout, "onViewCreated run", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+        //set onclick listeners
+        newWishlistButton.setOnClickListener(this);
+        addWishlistButton.setOnClickListener(this);
 
         //Connect to current wishlist in Firebase
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList");
 
+        //If wishlist does not belong to current user, don't allow editing
+        if(!(MainActivity.userProfile.getUid() == uID)){
+            newWishlistButton.setVisibility(View.GONE);
+        }
+
         //Will update view every time current user's friends list is updated in
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                GenericTypeIndicator<ArrayList<Wishlist>> genericTypeIndicator =new GenericTypeIndicator<ArrayList<Wishlist>>(){};
+                wishlistLayout.removeAllViews();
 
+                GenericTypeIndicator<ArrayList<Wishlist>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<Wishlist>>(){};
                 wishlists = dataSnapshot.getValue(genericTypeIndicator);
-                //wishlists = dataSnapshot.getValue(ArrayList<>.class);
+
                 drawListItems();
             }
 
@@ -101,46 +145,57 @@ public class fWishbook extends Fragment {
     }
     public void drawListItems()
     {
+        fWishbook.this.getActivity();
+        FragmentManager fm = (fWishbook.this
+            .getActivity()).getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
         for(int i = 0; i < wishlists.size(); i++) {
-            FragmentManager fm = ((MainActivity) fWishbook.this
-                    .getActivity()).getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
 
             Wishlist list = wishlists.get(i);
 
             fWishbookItem fragment = fWishbookItem.newInstance(list, uID, i);
             ft.add(R.id.wishlist_layout, fragment);
 
-            ft.commit();
+
         }
+
+        ft.commit();
     }
 
-    //grab display information from each friend in current user's friend list
-    public void getListInfo()
+    public void addWishlist()
     {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        Wishlist newWishlist = new Wishlist();
 
-        //Get display information from wishlist items
-        for(int i = 0; i < wishlists.size(); i++) {
+        newWishlist.setListName(addName.getText().toString());
+        newWishlist.setListDescription(addDescription.getText().toString());
 
-            //get reference to single item on list
-            DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + Integer.toString(i));
+        Date currentTime = Calendar.getInstance().getTime();
+        newWishlist.setDateCreated(currentTime.toString());
 
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + Integer.toString(wishlists.size()));
 
-                Wishlist list = new Wishlist();
+        myRef.setValue(newWishlist);
 
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    list = dataSnapshot.getValue(Wishlist.class);
-                    //drawListItem(list);
-                }
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    System.out.println("The read failed: " + databaseError.getCode());
-                }
-            });
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        FragmentManager fm = ((MainActivity) fWishbook.this
+                .getActivity()).getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        //When item is clicked, load profile fragment with friend information
+        int i = v.getId();
+        if (i == R.id.new_wishlist_button) {
+            wishlistCreationForm.setVisibility(View.VISIBLE);
+        }
+        if (i == R.id.add_wishlist_button) {
+            addWishlist();
+            wishlistCreationForm.setVisibility(View.GONE);
         }
     }
 }

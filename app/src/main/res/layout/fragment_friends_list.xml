@@ -3,20 +3,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="g.project.giftthingapp.fFriendList">
-
-    <!-- TODO: Update blank fragment layout -->
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/friendLayout"
-            android:orientation="vertical"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></LinearLayout>
-    </ScrollView>
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_layout"
+                android:layout_toLeftOf="@+id/search_friend_button"
+                android:layout_alignParentLeft="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
 
 
+                <EditText
+                    android:id="@+id/search_friend_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Search for a friend..."
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/search_friend_button"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FIND"/>
+        </RelativeLayout>
+
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/results_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="----Search Results----"/>
+
+                    <LinearLayout
+                        android:id="@+id/results_layout"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="----My Friends----"/>
+
+                        <LinearLayout
+                        android:id="@+id/friend_layout"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                    </LinearLayout>
+
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
 
 </FrameLayout>
