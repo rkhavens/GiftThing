@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         userProfile = new Profile();
-        userProfile.setName("Mark Payne");
+        /*userProfile.setName("Mark Payne");
         userProfile.setAddress("1234 address lane");
         userProfile.setBiography("I like turtles");
         userProfile.setBirthday("09/28/1994");
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity
 
         bDay.addWishlistItem(item1);
 
-        userProfile.addWishlist(bDay);
+        userProfile.addWishlist(bDay);*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Profile/User/" + currentUser.getUid());
-        myRef.setValue(userProfile);
+        //myRef.setValue(userProfile);
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
