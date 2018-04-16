@@ -99,15 +99,16 @@ public class fWishlist extends Fragment implements View.OnClickListener{
 
         //Connect to current wishlist in Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + Integer.toString(index));
+        DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishbook/" + Integer.toString(index));
 
         //Will update view every time current user's friends list is updated in
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("Where");
                 currentWishlist = dataSnapshot.getValue(Wishlist.class);
-
                 itemLayout.removeAllViews();
+                System.out.println("do");
                 drawListItems();
             }
 
@@ -120,7 +121,9 @@ public class fWishlist extends Fragment implements View.OnClickListener{
 
     public void drawListItems()
     {
+        System.out.println("you");
         for(int i = 0; i < currentWishlist.getItemList().size(); i++) {
+            System.out.println("break");
             FragmentManager fm = ((MainActivity) fWishlist.this
                     .getActivity()).getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -147,7 +150,6 @@ public class fWishlist extends Fragment implements View.OnClickListener{
         int i = v.getId();
         if (i == R.id.add_link_button) {
             new WebScraper().execute();
-
         }
     }
 
@@ -193,6 +195,7 @@ public class fWishlist extends Fragment implements View.OnClickListener{
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.show();*/
             url = addLinkText.getText().toString();
+            addLinkText.setText("");
         }
 
         @Override
@@ -277,7 +280,10 @@ public class fWishlist extends Fragment implements View.OnClickListener{
             item.setQtyPurchased(0);
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("Profile/User/" + uID + "/wishlistList/" + Integer.toString(index) + "/itemList/" + Integer.toString(currentWishlist.getItemList().size()));
+            DatabaseReference myRef;
+            //if (currentWishlist.getItemList() == null) myRef = database.getReference("Profile/User/" + uID + "/wishbook/" + Integer.toString(index) + "/itemList/0");
+            myRef = database.getReference("Profile/User/" + uID + "/wishbook/" + Integer.toString(index) + "/itemList/" + Integer.toString(currentWishlist.getItemList().size()));
+
             myRef.setValue(item);
 
             reloadFragment();

@@ -14,6 +14,9 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.w3c.dom.Text;
 
 /**
@@ -27,6 +30,9 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
     private TextView friend_name;
     private TextView friend_pos;
     private Button addFriendButton;
+
+    //variables
+    private String uID;
 
     //Use this function to generate a new instance of fFriendlist_Item
     public static fFriendlist_Item newInstance(String uID, String name, String pos, boolean isFriend) {
@@ -45,14 +51,17 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
 
-        //Set onClickListener for itemBox
-        itemBox = this.getView().findViewById(R.id.layout_itemBox);
-        itemBox.setOnClickListener(this);
+        uID = getArguments().getString("uID");
 
         //Initialize display views
+        itemBox = this.getView().findViewById(R.id.layout_itemBox);
         friend_name = this.getView().findViewById(R.id.friend_name);
         friend_pos = this.getView().findViewById(R.id.item_number);
         addFriendButton = this.getView().findViewById(R.id.add_friend_button);
+
+        //Set onClickListeners
+        itemBox.setOnClickListener(this);
+        addFriendButton.setOnClickListener(this);
 
         //Set displays with display information
         friend_name.setText(getArguments().getString("name"));
@@ -83,7 +92,13 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
         if (i == R.id.layout_itemBox) {
             ft.replace(R.id.fragment_place, fProfile.newInstance(getArguments().getString("uID")));
             ft.commit();
-
+        }
+        else if(i == R.id.add_friend_button){
+            System.out.println("pushed");
+            MainActivity.userProfile.addFriend(uID);
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Profile/User/" + MainActivity.userProfile.getUid() + "/friendsList");
+            myRef.setValue(MainActivity.userProfile.getFriendsList());
         }
     }
 }
