@@ -160,6 +160,7 @@ public class fWishlist extends Fragment implements View.OnClickListener{
         private String description = "";
         private double price = 0;
         private String url = "https://www.amazon.com/Players-Handbook-Dungeons-Dragons-Wizards/dp/0786965606/ref=sr_1_2?ie=UTF8&qid=1523496117&sr=8-2&keywords=dnd";
+        private String imgUrl = "";
 
         public String cleanString(String str){
             System.out.print(str);
@@ -262,6 +263,19 @@ public class fWishlist extends Fragment implements View.OnClickListener{
                 }
 
 
+                Element imgContainerDiv = document.getElementById("landingImage");
+                if(imgContainerDiv == null) imgContainerDiv = document.getElementById("imgBlkFront");
+                if(imgContainerDiv == null) imgContainerDiv = document.getElementById("ebooksImgBlkFront");
+
+                if(!(imgContainerDiv == null)) {
+                    String urls = imgContainerDiv.attr("data-a-dynamic-image");
+                    int index = urls.indexOf("\"", 3);
+                    urls = urls.substring(2, index);
+                    imgUrl = urls;
+                    System.out.println(urls);
+                }
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -278,6 +292,7 @@ public class fWishlist extends Fragment implements View.OnClickListener{
             item.setItemPrice(price);
             item.setQtyDesired(1);
             item.setQtyPurchased(0);
+            item.setImgURL(imgUrl);
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef;

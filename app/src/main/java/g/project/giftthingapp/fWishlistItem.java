@@ -1,7 +1,10 @@
 package g.project.giftthingapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,8 +12,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by MarcP on 4/9/2018.
@@ -41,6 +51,7 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
     private LinearLayout itemBox;
     private TextView itemNameView;
     private TextView itemDescriptionView;
+    private ImageView itemImgView;
 
     //Use this function to generate a new instance of fWishlistItem
     public static fWishlistItem newInstance(WishlistItem item) {
@@ -50,7 +61,7 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
         args.putString(ARG_ITEM_NAME, item.getItemName());
         args.putString(ARG_DESCRIPTION, item.getItemDescription());
         args.putString(ARG_URL, item.getItemURL());
-        //args.putString(ARG_IMG_URL, item.getImgURL());
+        args.putString(ARG_IMG_URL, item.getImgURL());
         args.putDouble(ARG_PRICE, item.getItemPrice());
         args.putInt(ARG_QTY_DESIRED, item.getQtyDesired());
         args.putInt(ARG_QTY_PURCHASED, item.getQtyPurchased());
@@ -60,7 +71,7 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
 
         //Set onClickListener for itemBox
         itemBox = this.getView().findViewById(R.id.layout_itemBox);
@@ -69,10 +80,13 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
         //Initialize display views
         itemNameView = this.getView().findViewById(R.id.item_name);
         itemDescriptionView = this.getView().findViewById(R.id.item_summary);
+        itemImgView = this.getView().findViewById(R.id.item_img);
+
 
         //Set displays with display information
         itemNameView.setText(itemName);
         itemDescriptionView.setText(itemDescription);
+        if(!imgURL.equals("")) new imgScraper().execute();
 
     }
 
@@ -87,6 +101,7 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
         itemPrice = getArguments().getDouble(ARG_PRICE);
         qtyDesired = getArguments().getInt(ARG_QTY_DESIRED);
         qtyPurchased = getArguments().getInt(ARG_QTY_PURCHASED);
+        imgURL = getArguments().getString(ARG_IMG_URL);
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_wishlist_item, container, false);
@@ -105,6 +120,39 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
             Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(itemURL));
             startActivity(intent);
 
+        }
+    }
+
+    private class imgScraper extends AsyncTask<Void, Void, Void> {
+
+        Bitmap bitmap;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                //open img src
+                InputStream input = new java.net.URL(imgURL).openStream();
+                // Decode Bitmap
+                bitmap = BitmapFactory.decodeStream(input);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            // Set title into TextView
+            itemImgView.setImageBitmap(bitmap);
         }
     }
 }
