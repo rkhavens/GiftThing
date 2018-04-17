@@ -149,11 +149,12 @@ public class MainActivity extends AppCompatActivity
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        if (id == R.id.nav_home) {
+        /*if (id == R.id.nav_home) {
             ft.replace(R.id.fragment_place, new fHomeList());
             ft.commit();
             getSupportActionBar().setTitle("Home");
-        } else if (id == R.id.nav_profile) {
+        } */
+        if (id == R.id.nav_profile) {
             ft.replace(R.id.fragment_place, fProfile.newInstance(userProfile.getUid()));
             ft.commit();
             getSupportActionBar().setTitle("My Profile");
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity
             toast.show();
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
 
-        } else if (id == R.id.nav_share) {
+        }/* else if (id == R.id.nav_share) {
             //getSupportActionBar().setTitle("Share");
             Context context = getApplicationContext();
             CharSequence text = "Share Clicked!";
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-        }
+        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

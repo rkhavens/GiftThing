@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.support.v7.widget.CardView;
 
 /**
  * Created by MarcP on 4/9/2018.
@@ -34,7 +35,7 @@ public class fWishbookItem extends Fragment implements View.OnClickListener {
     private String uID;
 
     //Views
-    private LinearLayout itemBox;
+    private CardView itemBox;
     private TextView listNameView;
     private TextView listDescriptionView;
 

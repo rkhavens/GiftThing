@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ import org.w3c.dom.Text;
 public class fFriendlist_Item extends Fragment implements View.OnClickListener {
 
     //Views
-    private LinearLayout itemBox;
+    private CardView itemBox;
     private TextView friend_name;
     private TextView friend_pos;
     private Button addFriendButton;
