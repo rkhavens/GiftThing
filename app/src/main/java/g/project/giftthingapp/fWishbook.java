@@ -199,8 +199,15 @@ public class fWishbook extends Fragment implements View.OnClickListener {
             wishlistCreationForm.setVisibility(View.VISIBLE);
         }
         if (i == R.id.add_wishlist_button) {
-            addWishlist();
-            wishlistCreationForm.setVisibility(View.GONE);
+            if(addName.getText().toString().replace(" ", "").equals("")) {
+                addName.setError("Required.");
+                addName.setText("");
+            }
+            else {
+                addWishlist();
+                wishlistCreationForm.setVisibility(View.GONE);
+            }
+
         }
     }
 }

@@ -149,7 +149,13 @@ public class fWishlist extends Fragment implements View.OnClickListener{
         //When item is clicked, load profile fragment with friend information
         int i = v.getId();
         if (i == R.id.add_link_button) {
-            new WebScraper().execute();
+            if(addLinkText.getText().toString().replace(" ", "").equals("")){
+                addLinkText.setError("Required.");
+            }
+            else if(!(addLinkText.getText().toString().contains("www.amazon.com"))){
+                addLinkText.setError("Amazon links only.");
+            }
+            else new WebScraper().execute();
         }
     }
 
@@ -164,27 +170,10 @@ public class fWishlist extends Fragment implements View.OnClickListener{
 
         public String cleanString(String str){
             System.out.print(str);
-            //str.replaceFirst("\u00a0", "");
-            //while(Character.isWhitespace(str.charAt(0)))
-            //str = str.replaceFirst("\\s", "");
-            /*
-            str = str.replace("<div>", "");
-            str = str.replace("<em>", "");
-            str = str.replace("</em>", "");
-            str = str.replace("</div>", "");
-            str = str.replace("<br>","");
-            str = str.replace("\"", "");
-            str = str.replace("<b>", "");
-            str = str.replace("</b>","");
-            str = str.replace("&nbsp;","");
-*/
-            //str = str.replace("&amp;", "&");
-
             Document doc = Jsoup.parse(str);
             str = doc.text();
             System.out.print(str);
             return str;
-
         }
 
         @Override

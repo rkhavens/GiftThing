@@ -177,7 +177,9 @@ public class fFriendList extends Fragment implements View.OnClickListener {
     public void onClick(View v){
         int i = v.getId();
         if (i == R.id.search_friend_button) {
-            if(!(searchFriendText.getText().toString().equals(""))) {
+            if(searchFriendText.getText().toString().replace(" ", "").equals("")){
+                searchFriendText.setText("");
+            }else{
                 resultsHeader.setVisibility(View.VISIBLE);
                 resultsLayout.removeAllViews();
                 searchForFriend();
