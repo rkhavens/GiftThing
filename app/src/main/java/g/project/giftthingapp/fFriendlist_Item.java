@@ -160,6 +160,8 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
             if(addFriendButton.getText().equals("ADD")) addFriend();
             else if(addFriendButton.getText().equals("REMOVE")) removeFriend();
 
+            addFriendButton.setVisibility(View.GONE);
+
             ft.replace(R.id.fragment_place, new fFriendList());
             ft.commit();
 
