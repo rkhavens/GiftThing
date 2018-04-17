@@ -155,8 +155,6 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
             ft.commit();
         }
         else if(i == R.id.add_friend_button){
-            System.out.println("pushed");
-
             if(addFriendButton.getText().equals("ADD")) addFriend();
             else if(addFriendButton.getText().equals("REMOVE")) removeFriend();
 
