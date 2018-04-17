@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/GiftThing.iml" filepath="$PROJECT_DIR$/.idea/GiftThing.iml" />
-      <module fileurl="file://$PROJECT_DIR$/GiftThing.iml" filepath="$PROJECT_DIR$/GiftThing.iml" />
+      <module fileurl="file://C:\Users\MarcP\StudioProjects\GiftThingDesign\.idea\GiftThing.iml" filepath="C:\Users\MarcP\StudioProjects\GiftThingDesign\.idea\GiftThing.iml" />
+      <module fileurl="file://C:\Users\MarcP\StudioProjects\GiftThingDesign\GiftThing.iml" filepath="C:\Users\MarcP\StudioProjects\GiftThingDesign\GiftThing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GiftThingDesign.iml" filepath="$PROJECT_DIR$/GiftThingDesign.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\MarcP\StudioProjects\GiftThingDesign\app\app.iml" filepath="C:\Users\MarcP\StudioProjects\GiftThingDesign\app\app.iml" />
     </modules>
   </component>
 </project>
