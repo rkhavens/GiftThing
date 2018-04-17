@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.support.v7.widget.CardView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,10 +49,12 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
     private int qtyPurchased;
 
     //Views
-    private LinearLayout itemBox;
+    private CardView itemBox;
     private TextView itemNameView;
     private TextView itemDescriptionView;
     private ImageView itemImgView;
+
+    private ImageView removeItem;
 
     //Use this function to generate a new instance of fWishlistItem
     public static fWishlistItem newInstance(WishlistItem item) {
@@ -87,6 +90,9 @@ public class fWishlistItem extends Fragment implements View.OnClickListener {
         itemNameView.setText(itemName);
         itemDescriptionView.setText(itemDescription);
         if(!imgURL.equals("")) new imgScraper().execute();
+
+        removeItem = this.getView().findViewById(R.id.item_remove);
+        removeItem.setOnClickListener(this);
 
     }
 

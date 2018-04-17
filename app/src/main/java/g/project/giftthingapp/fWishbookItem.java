@@ -4,11 +4,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.view.menu.MenuView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.support.v7.widget.CardView;
+
+import android.widget.ImageView;
 
 /**
  * Created by MarcP on 4/9/2018.
@@ -34,9 +38,12 @@ public class fWishbookItem extends Fragment implements View.OnClickListener {
     private String uID;
 
     //Views
-    private LinearLayout itemBox;
+    private CardView itemBox;
     private TextView listNameView;
     private TextView listDescriptionView;
+
+    private ImageView itemEdit;
+    private ImageView itemRemove;
 
     //Use this function to generate a new instance of fWishlistItem
     public static fWishbookItem newInstance(Wishlist list,String uID, int index) {
@@ -69,6 +76,12 @@ public class fWishbookItem extends Fragment implements View.OnClickListener {
         //Set displays with display information
         listNameView.setText(listName);
         listDescriptionView.setText(listDescription);
+
+        itemEdit = this.getView().findViewById(R.id.wishbook_edit);
+        itemEdit.setOnClickListener(this);
+
+        itemRemove = this.getView().findViewById(R.id.wishbook_remove);
+        itemRemove.setOnClickListener(this);
 
     }
 

@@ -9,9 +9,11 @@
     <dimen name="item_image_width">60dp</dimen>
     <dimen name="item_image_height">60dp</dimen>
     <dimen name="item_buffer">6dp</dimen>
-    <dimen name="profile_header_height_expanded">200dp</dimen>
+    <dimen name="profile_header_height_expanded">300dp</dimen>
     <dimen name="profile_header_height_collapsed">100dp</dimen>
     <dimen name="profile_card_height_collapsed">150dp</dimen>
     <dimen name="profile_card_height_expanded">300dp</dimen>
     <dimen name="profile_card_buffer">6dp</dimen>
+    <dimen name="item_card_height_min">80dp</dimen>
+    <dimen name="item_card_height_max">100dp</dimen>
 </resources>

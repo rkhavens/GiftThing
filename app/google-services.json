@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "472545341047-dimrvpp5ep65vajia9g8o8881ebd3k69.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "g.project.giftthingapp",
+            "certificate_hash": "813efbf5a2005dd064a2ed41be742ab184f9c8bf"
+          }
+        },
+        {
           "client_id": "472545341047-h8apn4ktkaecugdf6jmu3amua2ms3av1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
