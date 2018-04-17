@@ -153,6 +153,7 @@ public class fFriendList extends Fragment implements View.OnClickListener {
         String query =  searchFriendText.getText().toString().toUpperCase().replace(" ", "");
 
         myRef = database.getReference("Profile/Usernames/" + query);
+
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -176,9 +177,12 @@ public class fFriendList extends Fragment implements View.OnClickListener {
     public void onClick(View v){
         int i = v.getId();
         if (i == R.id.search_friend_button) {
-            resultsHeader.setVisibility(View.VISIBLE);
-            resultsLayout.removeAllViews();
-            searchForFriend();
+            if(!(searchFriendText.getText().toString().equals(""))) {
+                resultsHeader.setVisibility(View.VISIBLE);
+                resultsLayout.removeAllViews();
+                searchForFriend();
+                searchFriendText.setText("");
+            }
         }
     }
 }

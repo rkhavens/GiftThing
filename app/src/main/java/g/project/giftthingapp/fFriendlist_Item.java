@@ -14,16 +14,26 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 /**
  * Created by MarcP on 4/3/2018.
  */
 
 public class fFriendlist_Item extends Fragment implements View.OnClickListener {
+
+    //firebase
+    private FirebaseDatabase database;
+    private DatabaseReference myRef;
 
     //Views
     private LinearLayout itemBox;
@@ -69,9 +79,9 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
         //Set displays with display information
         friend_name.setText(getArguments().getString("name"));
         friend_pos.setText(getArguments().getString("pos"));
-
-        if(getArguments().getBoolean("isFriend"))
-            addFriendButton.setVisibility(View.GONE);
+        if(uID == MainActivity.userProfile.getUid()) addFriendButton.setVisibility(View.GONE);
+        else if(getArguments().getBoolean("isFriend"))
+            addFriendButton.setText("REMOVE");
 
 
     }
@@ -81,6 +91,54 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_friendlist_item, container, false);
+    }
+
+    public void addFriend(){
+
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("Profile/User/" + MainActivity.userProfile.getUid() + "/friendsList/" + MainActivity.userProfile.getNumberOfFriends());
+        myRef.setValue(uID);
+
+
+        myRef = database.getReference("Profile/User/" + uID + "/friendsList/" + friendCount);
+        myRef.setValue(MainActivity.userProfile.getUid());
+
+        MainActivity.userProfile.addFriend(uID);
+    }
+
+    public void removeFriend(){
+        database = FirebaseDatabase.getInstance();
+
+        myRef = database.getReference("Profile/User/" + uID + "/friendsList");
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<ArrayList<String>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<String>>(){};
+                System.out.println("good");
+                ArrayList<String> friends = dataSnapshot.getValue(genericTypeIndicator);
+
+                for(int i = 0; i < friends.size(); i++){
+                    if(friends.get(i).equals(MainActivity.userProfile.getUid())) {
+                        friends.remove(i);
+                        break;
+                    }
+                }
+
+                myRef = database.getReference("Profile/User/" + uID + "/friendsList");
+                myRef.setValue(friends);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+        MainActivity.userProfile.removeFriend(uID);
+        myRef = database.getReference("Profile/User/" + MainActivity.userProfile.getUid() + "/friendsList");
+        myRef.setValue(MainActivity.userProfile.getFriendsList());
+
     }
 
     @Override
@@ -99,15 +157,12 @@ public class fFriendlist_Item extends Fragment implements View.OnClickListener {
         else if(i == R.id.add_friend_button){
             System.out.println("pushed");
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("Profile/User/" + MainActivity.userProfile.getUid() + "/friendsList/" + MainActivity.userProfile.getNumberOfFriends());
-            myRef.setValue(uID);
-
-            myRef = database.getReference("Profile/User/" + uID + "/friendsList/" + friendCount);
-            myRef.setValue(MainActivity.userProfile.getUid());
+            if(addFriendButton.getText().equals("ADD")) addFriend();
+            else if(addFriendButton.getText().equals("REMOVE")) removeFriend();
 
             ft.replace(R.id.fragment_place, new fFriendList());
             ft.commit();
+
         }
     }
 }

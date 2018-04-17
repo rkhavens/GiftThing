@@ -177,6 +177,12 @@ public class Profile {
 
     public void addFriend(String fID){friendsList.add(fID);}
 
+    public void removeFriend(String fID){
+        for (int i = 0; i < friendsList.size(); i++){
+            if(friendsList.get(i).equals(fID)) friendsList.remove(i);
+        }
+    }
+
     public void addWishlist(Wishlist wishlist){
         wishbook.add(wishlist);}
 }
